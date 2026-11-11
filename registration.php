@@ -5,7 +5,7 @@ $message = '';
 $error = '';
  
 // Fetch rice varieties dropdown
-$vStmt = $pdo->query("SELECT * FROM rice_varieties ORDER BY name ASC");
+$vStmt = $pdo->query("SELECT * FROM varieties");
 $varieties = $vStmt->fetchAll();
  
 // Handle submission
@@ -39,13 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
  
 // Fetch existing registered accounts from DB
+
 $listStmt = $pdo->query("
-    SELECT r.*, v.name AS variety_name 
-    FROM wholesale_registrations r 
-    JOIN rice_varieties v ON r.rice_variety_id = v.id 
-    ORDER BY r.id DESC
+    SELECT
+        r.*,
+        v.name AS variety_name
+    FROM wholesale_registrations r
+    LEFT JOIN varieties v
+        ON r.rice_variety_id = v.id
+    ORDER BY r.created_at DESC
 ");
+
 $registeredAccounts = $listStmt->fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

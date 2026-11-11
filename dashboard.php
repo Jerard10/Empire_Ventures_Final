@@ -6,20 +6,32 @@ $u = currentUser();
 $userId = $u['id'];
 
 $orderStmt = $pdo->prepare("
-    SELECT o.*, v.name AS variety_name
-    FROM orders o JOIN rice_varieties v ON o.rice_variety_id = v.id
-    WHERE o.user_id = ? ORDER BY o.created_at DESC
+    SELECT
+        o.*,
+        v.name AS variety_name
+    FROM orders o
+    LEFT JOIN varieties v
+        ON o.rice_variety_id = v.id
+    WHERE o.user_id = ?
+    ORDER BY o.created_at DESC
 ");
-$orderStmt->execute([$userId]);
-$orders = $orderStmt->fetchAll();
 
-$wsStmt = $pdo->prepare("
+$orderStmt->execute([$userId]);
+$orders = $orderStmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+$wholesaleStmt = $pdo->prepare("
     SELECT w.*, v.name AS variety_name
-    FROM wholesale_registrations w JOIN rice_varieties v ON w.rice_variety_id = v.id
-    WHERE w.user_id = ? OR w.email = ? ORDER BY w.created_at DESC
+    FROM wholesale_registrations AS w
+    LEFT JOIN varieties AS v
+        ON w.rice_variety_id = v.id
+    WHERE w.user_id = ? OR w.email = ?
+    ORDER BY w.created_at DESC
 ");
-$wsStmt->execute([$userId, $u['email']]);
-$registrations = $wsStmt->fetchAll();
+
+$wholesaleStmt->execute([$userId, $u['email']]);
+$registrations = $wholesaleStmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Summary numbers
 $spent = 0; $open = 0;
@@ -60,7 +72,7 @@ renderNav('');
                 <h1>Welcome back, <?= sanitize(explode(' ', $u['full_name'])[0]) ?></h1>
                 <p class="section-lede" style="margin:0">Your orders and wholesale status in one place.</p>
             </div>
-            <a href="order.php" class="btn btn-primary">Order rice</a>
+            <a href="orders.php" class="btn btn-primary">Order rice</a>
         </div>
 
         <dl class="stats">
@@ -84,7 +96,7 @@ renderNav('');
                         <tr><td colspan="7" class="empty-row">You have no orders yet. <a href="order.php">Place your first order</a>.</td></tr>
                     <?php else: foreach ($orders as $o): ?>
                         <tr>
-                            <th scope="row" class="cell-strong"><?= sanitize($o['order_number']) ?></th>
+                            <th scope="row" class="cell-strong"><?= sanitize($o['orders_number']) ?></th>
                             <td><?= sanitize($o['variety_name']) ?></td>
                             <td><?= (int)$o['quantity_sacks'] ?> × <?= (float)$o['sack_weight_kg'] ?> kg (<?= (float)$o['quantity_sacks'] * (float)$o['sack_weight_kg'] ?> kg)</td>
                             <td><?= peso($o['total_amount']) ?></td>

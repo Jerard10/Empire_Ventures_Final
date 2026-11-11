@@ -1,6 +1,6 @@
 <?php
 require_once 'db.php';
-$varieties = $pdo->query("SELECT * FROM rice_varieties WHERE is_active = 1 ORDER BY price_per_sack ASC")->fetchAll();
+$varieties = $pdo->query("SELECT * FROM varieties")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en"><head>

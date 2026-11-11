@@ -2,7 +2,7 @@
 require_once 'db.php';
  
 // Fetch active rice varieties from DB
-$stmt = $pdo->query("SELECT * FROM rice_varieties WHERE is_active = 1");
+$stmt = $pdo->query("SELECT * FROM varieties");
 $varieties = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -32,7 +32,7 @@ $varieties = $stmt->fetchAll();
                     farm-fresh grains at competitive wholesale and retail rates.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="order.php">Order Rice Sacks Now</a>
+                    <a class="btn btn-primary" href="orders.php">Order Rice Sacks Now</a>
                     <a class="btn btn-ghost" href="registration.php">Register as wholesale partner</a>
                 </div>
             </div>

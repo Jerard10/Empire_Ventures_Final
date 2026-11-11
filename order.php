@@ -8,7 +8,7 @@ $message = '';
 $error = '';
  
 // Fetch available varieties
-$stmt = $pdo->query("SELECT * FROM rice_varieties WHERE is_active = 1 ORDER BY name ASC");
+$stmt = $pdo->query("SELECT * FROM varieties ORDER BY name ASC");
 $varieties = $stmt->fetchAll();
  
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $orderNumber  = 'EV-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
  
             $insert = $pdo->prepare("
-                INSERT INTO orders (order_number, user_id, rice_variety_id, quantity_sacks, sack_weight_kg, price_per_sack, total_amount, delivery_address, contact_phone, payment_method)
+                INSERT INTO orders (orders_number, user_id, variety_id, quantity_sacks, sack_weight_kg, price_per_sack, total_amount, delivery_address, contact_phone, payment_method)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
  
