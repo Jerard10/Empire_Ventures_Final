@@ -5,7 +5,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$host = '127.0.0.1'; $db = 'empire_ventures'; $user = 'root'; $pass = ''; $charset = 'utf8mb4';
+$host = 'localhost';
+$db = 'firealertadmin_Empire_Ventures';
+$user = 'firealertadmin_your_db_user';
+$pass = 'YOUR_DB_PASSWORD';
+$charset = 'utf8mb4';
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -14,7 +18,10 @@ $options = [
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass, $options);
 } catch (PDOException $e) {
-    die("Database Connection Error: " . $e->getMessage());
+    error_log('Database connection failed: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed. Check the server configuration.']);
+    exit();
 }
 
 // ---- Business rules (change here) ----
